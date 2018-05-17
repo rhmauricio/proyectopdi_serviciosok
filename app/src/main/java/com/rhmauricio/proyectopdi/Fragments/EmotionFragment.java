@@ -1,12 +1,16 @@
-package com.rhmauricio.proyectopdi.activities;
+package com.rhmauricio.proyectopdi.Fragments;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -19,49 +23,42 @@ import com.rhmauricio.proyectopdi.classes.ObtencionCredenciales;
 import java.util.List;
 
 
-public class appActivity extends AppCompatActivity  {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class EmotionFragment extends Fragment {
+
 
     ImageView imageView2;
     Button button3;
 
-    private final static int REQUEST_IMAGE_CAPTURE = 1;
+    public EmotionFragment() {
+        // Required empty public constructor
+    }
 
     private AmazonRekognitionClient rekognitionClient;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_emotion, container, false);
+        button3 = view.findViewById(R.id.button3);
+        imageView2 = view.findViewById(R.id.imageView2);
+
+        return view;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_app);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        button3 = findViewById(R.id.button3);
-        imageView2 = findViewById(R.id.imageView2);
 
-        ObtencionCredenciales credenciales = new ObtencionCredenciales(this, listenerCredenciales);
+        ObtencionCredenciales credenciales = new ObtencionCredenciales(getContext(), listenerCredenciales);
         credenciales.execute();
-
-        //llamarIntent();
-    }
-
-    private void  llamarIntent(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView2.setImageBitmap(imageBitmap);
-        }
     }
 
     public void onTomarFotoClicked(View view) {
-        DeteccionRostros deteccionRostros = new DeteccionRostros(this, rekognitionClient, listenerDeteccion);
+        DeteccionRostros deteccionRostros = new DeteccionRostros(getContext(), rekognitionClient, listenerDeteccion);
 
         // Ejecuta el hilo de detección de rostro con la ruta de la imagen
         // TODO: cambiar nombre a imagen existente
@@ -83,6 +80,4 @@ public class appActivity extends AppCompatActivity  {
             }
         }
     };
-
-
 }
