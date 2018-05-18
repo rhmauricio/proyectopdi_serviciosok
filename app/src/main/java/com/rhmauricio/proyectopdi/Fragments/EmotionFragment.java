@@ -54,6 +54,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -73,6 +75,13 @@ public class EmotionFragment extends Fragment {
         ORIENTATIONS.append(Surface.ROTATION_180,270);
         ORIENTATIONS.append(Surface.ROTATION_270,180);
     }
+
+    // Time at which data base will be read periodically
+    private static int INTERVAL = 1000;
+
+    // Timer objects to create periodic task
+    private Timer timer;
+    private TimerTask timerTask;
 
     private String cameraId;
     private CameraDevice cameraDevice;
@@ -145,14 +154,7 @@ public class EmotionFragment extends Fragment {
                 takePicture();
             }
         });
-    }
-
-    public void onTomarFotoClicked(View view) {
-        DeteccionRostros deteccionRostros = new DeteccionRostros(getContext(), rekognitionClient, listenerDeteccion);
-
-        // Ejecuta el hilo de detección de rostro con la ruta de la imagen
-        // TODO: cambiar nombre a imagen existente
-        deteccionRostros.execute("girl_image.JPG");
+        startTimer();
     }
 
     ObtencionCredenciales.AsyncResponse listenerCredenciales = new ObtencionCredenciales.AsyncResponse() {
@@ -202,7 +204,7 @@ public class EmotionFragment extends Fragment {
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION,ORIENTATIONS.get(rotation));
 
-            file = new File(Environment.getExternalStorageDirectory()+"/"+ UUID.randomUUID().toString()+".jpg");
+            file = new File(Environment.getExternalStorageDirectory()+"/"+ "foto_face.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
@@ -233,7 +235,7 @@ public class EmotionFragment extends Fragment {
                 private void save(byte[] bytes) throws IOException {
                     OutputStream outputStream = null;
                     try{
-                        outputStream = new FileOutputStream(file);
+                        outputStream = new FileOutputStream(file, false);
                         outputStream.write(bytes);
                     }finally {
                         if(outputStream != null)
@@ -372,8 +374,6 @@ public class EmotionFragment extends Fragment {
         }
     }
 
-
-
     private void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
         try{
@@ -389,5 +389,53 @@ public class EmotionFragment extends Fragment {
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    }
+
+    public void startTimer() {
+
+        //set a new Timer
+        timer = new Timer();
+        //initialize the TimerTask's job
+        initializeTimerTask();
+        //schedule the timer, after the first 10ms the TimerTask will run every INTERVAL ms
+        timer.schedule(timerTask, 10, INTERVAL); //
+    }
+
+    /**
+     * Takes pictures periodically, each "INTERVAL" time
+     */
+    public void initializeTimerTask() {
+
+        timerTask = new TimerTask() {
+            public void run() {
+                // Take picture on front camera
+                btnCapture.callOnClick();
+            }
+
+        };
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startBackgroundThread();
+
+        // When the screen is turned off and turned back on, the SurfaceTexture is already
+        // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
+        // a camera and start preview from here (otherwise, we wait until the surface is ready in
+        // the SurfaceTextureListener).
+        if (textureView.isAvailable()) {
+            openCamera();
+        } else {
+            textureView.setSurfaceTextureListener(textureListener);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        //closeCamera();
+        stopBackgroundThread();
+        super.onPause();
     }
 }
