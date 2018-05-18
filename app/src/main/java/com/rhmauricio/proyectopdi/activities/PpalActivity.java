@@ -1,5 +1,6 @@
 package com.rhmauricio.proyectopdi.activities;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rhmauricio.proyectopdi.Fragments.EmotionFragment;
+import com.rhmauricio.proyectopdi.Fragments.StaticsFragment;
 import com.rhmauricio.proyectopdi.R;
 
 public class PpalActivity extends AppCompatActivity {
@@ -35,8 +37,17 @@ public class PpalActivity extends AppCompatActivity {
                             .replace(R.id.fragment_container, firstFragment).commit();
                     return true;
                 case R.id.navigation_statics:
+                    // Create a new Fragment to be placed in the activity layout
+                    StaticsFragment secondFragment = new StaticsFragment();
 
-                    return true;
+                    // In case this activity was started with special instructions from an
+                    // Intent, pass the Intent's extras to the fragment as arguments
+                    //firstFragment.setArguments(getIntent().getExtras());
+
+                    // Add the fragment to the 'fragment_container' FrameLayout
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, secondFragment).commit();
+                return true;
 
             }
             return false;
@@ -75,5 +86,4 @@ public class PpalActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
-
 }

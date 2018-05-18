@@ -43,7 +43,7 @@ public class EmotionFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_emotion, container, false);
         button3 = view.findViewById(R.id.button3);
-        imageView2 = view.findViewById(R.id.imageView2);
+        //imageView2 = view.findViewById(R.id.imageView2);
 
         return view;
     }
