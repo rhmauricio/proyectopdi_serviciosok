@@ -18,6 +18,7 @@ import com.rhmauricio.proyectopdi.R;
 
 public class PpalActivity extends AppCompatActivity {
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
