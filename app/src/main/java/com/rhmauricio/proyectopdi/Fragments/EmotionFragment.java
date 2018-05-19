@@ -4,6 +4,8 @@ package com.rhmauricio.proyectopdi.Fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -53,10 +55,14 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+
+import static com.rhmauricio.proyectopdi.constants.Constants.CINECOLOMBIA;
 
 
 /**
@@ -66,6 +72,7 @@ public class EmotionFragment extends Fragment {
 
     private Button btnCapture;
     private TextureView textureView;
+    private ImageView logos;
 
     //Check state orientation of output image
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -96,6 +103,8 @@ public class EmotionFragment extends Fragment {
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+    private Map<Integer, Bitmap> arregoloLogos;
+
 
     CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
@@ -133,6 +142,7 @@ public class EmotionFragment extends Fragment {
         //imageView2 = view.findViewById(R.id.imageView2);
         textureView = view.findViewById(R.id.textureView);
         btnCapture = view.findViewById(R.id.btnCapture);
+        logos=view.findViewById(R.id.logos);
         return view;
     }
 
@@ -140,6 +150,7 @@ public class EmotionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        val = 0;
 
         ObtencionCredenciales credenciales = new ObtencionCredenciales(getContext(), listenerCredenciales);
         credenciales.execute();
@@ -148,13 +159,30 @@ public class EmotionFragment extends Fragment {
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
 
-        btnCapture.setOnClickListener(new View.OnClickListener() {
+        /*btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 takePicture();
-            }
+            }nextButtonListener
         });
-        startTimer();
+       // startTimer();*/
+        btnCapture.setOnClickListener(nextButtonListener);
+        arregoloLogos = new HashMap<>();
+        String[] images;
+        //agregar la extension en mminuscula.
+        try {
+            images = getContext().getAssets().list("");
+            for(int i = 0; i < images.length ; i ++) {
+                if(images[i].contains(".png") || images[i].contains(".jpg")) {
+                    Bitmap logos_ = BitmapFactory.decodeStream(getContext().getAssets().open(images[i]));
+                    arregoloLogos.put(i, logos_);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     ObtencionCredenciales.AsyncResponse listenerCredenciales = new ObtencionCredenciales.AsyncResponse() {
@@ -438,4 +466,14 @@ public class EmotionFragment extends Fragment {
         stopBackgroundThread();
         super.onPause();
     }
+    int val;
+    View.OnClickListener nextButtonListener= new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            val = (val < 5) ? ++val: 0;
+            logos.setImageBitmap(arregoloLogos.get(val));
+            Log.d("hola", arregoloLogos.get(val).toString());
+
+        }
+    };
 }
