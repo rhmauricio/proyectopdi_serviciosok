@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.services.rekognition.AmazonRekognitionClient;
@@ -72,6 +73,7 @@ public class EmotionFragment extends Fragment {
 
     private Button btnCapture;
     private TextureView textureView;
+    private TextView emotionsTextView;
     private ImageView logos;
 
     //Check state orientation of output image
@@ -105,6 +107,8 @@ public class EmotionFragment extends Fragment {
     private HandlerThread mBackgroundThread;
     private Map<Integer, Bitmap> arregoloLogos;
 
+    private ByteBuffer photoBuffer;
+
 
     CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
@@ -125,7 +129,7 @@ public class EmotionFragment extends Fragment {
         }
     };
 
-    ImageView imageView2;
+
 
 
     public EmotionFragment() {
@@ -139,7 +143,7 @@ public class EmotionFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_emotion, container, false);
 
-        //imageView2 = view.findViewById(R.id.imageView2);
+        emotionsTextView = view.findViewById(R.id.textView);
         textureView = view.findViewById(R.id.textureView);
         btnCapture = view.findViewById(R.id.btnCapture);
         logos=view.findViewById(R.id.logos);
@@ -195,8 +199,15 @@ public class EmotionFragment extends Fragment {
     DeteccionRostros.AsyncResponse listenerDeteccion = new DeteccionRostros.AsyncResponse() {
         @Override
         public void processFinish(List<FaceDetail> detallesRostro) {
+            if (detallesRostro == null) {
+                Log.w("WARNING ROSTRO: ", "Detalles rostro nulos");
+                Toast.makeText(getContext(), "no Detectó", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            //Toast.makeText(getContext(), "Detectó detalles", Toast.LENGTH_SHORT).show();
             for (FaceDetail detalleRostro: detallesRostro) {
                 Log.d("Emociones: ", detalleRostro.getEmotions().toString());
+                emotionsTextView.setText(detalleRostro.getEmotions().toString());
             }
         }
     };
@@ -245,11 +256,7 @@ public class EmotionFragment extends Fragment {
                         save(bytes);
 
                     }
-                    catch (FileNotFoundException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    catch (IOException e)
+                    catch (Exception e)
                     {
                         e.printStackTrace();
                     }
@@ -278,7 +285,10 @@ public class EmotionFragment extends Fragment {
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     Toast.makeText(getContext(), "Saved "+file, Toast.LENGTH_SHORT).show();
+                    DeteccionRostros deteccionRostros= new DeteccionRostros(getContext(), rekognitionClient,listenerDeteccion);
+                    deteccionRostros.execute(file.toString());
                     createCameraPreview();
+
                 }
             };
 
@@ -472,7 +482,7 @@ public class EmotionFragment extends Fragment {
         public void onClick(View v) {
             val = (val < 5) ? ++val: 0;
             logos.setImageBitmap(arregoloLogos.get(val));
-            Log.d("hola", arregoloLogos.get(val).toString());
+            takePicture();
 
         }
     };
