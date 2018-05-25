@@ -32,7 +32,6 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -49,7 +48,6 @@ import com.rhmauricio.proyectopdi.classes.DeteccionRostros;
 import com.rhmauricio.proyectopdi.classes.ObtencionCredenciales;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -61,9 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
-
-import static com.rhmauricio.proyectopdi.constants.Constants.CINECOLOMBIA;
 
 
 /**
@@ -175,16 +170,15 @@ public class EmotionFragment extends Fragment {
         String[] images;
         //agregar la extension en mminuscula.
         try {
-            images = getContext().getAssets().list("");
-            for(int i = 0; i < images.length ; i ++) {
-                if(images[i].contains(".png") || images[i].contains(".jpg")) {
-                    Bitmap logos_ = BitmapFactory.decodeStream(getContext().getAssets().open(images[i]));
-                    arregoloLogos.put(i, logos_);
-                }
+            images = getContext().getAssets().list("publicidad");
+            for(int i = 0; i < images.length ; i++) {
+                arregoloLogos.put(i, BitmapFactory.decodeStream(getContext().getAssets().open("publicidad/" + images[i])));
             }
+            logos.setImageBitmap(arregoloLogos.get(0));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
 
     }
@@ -250,10 +244,15 @@ public class EmotionFragment extends Fragment {
                     Image image = null;
                     try{
                         image = reader.acquireLatestImage();
+
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
+
                         buffer.get(bytes);
-                        save(bytes);
+                        Bitmap bitmapImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        //bitmapImage = Bitmap.createScaledBitmap(bitmapImage, 720, 480, true);
+
+                        save(bitmapImage);
 
                     }
                     catch (Exception e)
@@ -267,11 +266,11 @@ public class EmotionFragment extends Fragment {
                         }
                     }
                 }
-                private void save(byte[] bytes) throws IOException {
+                private void save(Bitmap bitmapImage) throws IOException {
                     OutputStream outputStream = null;
                     try{
                         outputStream = new FileOutputStream(file, false);
-                        outputStream.write(bytes);
+                        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
                     }finally {
                         if(outputStream != null)
                             outputStream.close();
@@ -480,9 +479,9 @@ public class EmotionFragment extends Fragment {
     View.OnClickListener nextButtonListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            val = (val < 5) ? ++val: 0;
+            val = (val < 4)? ++val: 0;
             logos.setImageBitmap(arregoloLogos.get(val));
-            takePicture();
+            //takePicture();
 
         }
     };
