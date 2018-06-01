@@ -19,42 +19,6 @@ import com.rhmauricio.proyectopdi.R;
 public class PpalActivity extends AppCompatActivity {
 
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_emotion:
-                    // Create a new Fragment to be placed in the activity layout
-                    EmotionFragment firstFragment = new EmotionFragment();
-
-                    // In case this activity was started with special instructions from an
-                    // Intent, pass the Intent's extras to the fragment as arguments
-                    //firstFragment.setArguments(getIntent().getExtras());
-
-                    // Add the fragment to the 'fragment_container' FrameLayout
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, firstFragment).commit();
-                    return true;
-                case R.id.navigation_statics:
-                    // Create a new Fragment to be placed in the activity layout
-                    StaticsFragment secondFragment = new StaticsFragment();
-
-                    // In case this activity was started with special instructions from an
-                    // Intent, pass the Intent's extras to the fragment as arguments
-                    //firstFragment.setArguments(getIntent().getExtras());
-
-                    // Add the fragment to the 'fragment_container' FrameLayout
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, secondFragment).commit();
-                return true;
-
-            }
-            return false;
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,4 +51,40 @@ public class PpalActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_emotion:
+                    // Create a new Fragment to be placed in the activity layout
+                    EmotionFragment firstFragment = new EmotionFragment();
+
+                    // In case this activity was started with special instructions from an
+                    // Intent, pass the Intent's extras to the fragment as arguments
+                    //firstFragment.setArguments(getIntent().getExtras());
+
+                    // Add the fragment to the 'fragment_container' FrameLayout
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, firstFragment).commit();
+                    return true;
+                case R.id.navigation_statics:
+                    // Create a new Fragment to be placed in the activity layout
+                    StaticsFragment secondFragment = new StaticsFragment();
+
+                    // In case this activity was started with special instructions from an
+                    // Intent, pass the Intent's extras to the fragment as arguments
+                    //firstFragment.setArguments(getIntent().getExtras());
+
+                    // Add the fragment to the 'fragment_container' FrameLayout
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, secondFragment).commit();
+                    return true;
+
+            }
+            return false;
+        }
+    };
 }

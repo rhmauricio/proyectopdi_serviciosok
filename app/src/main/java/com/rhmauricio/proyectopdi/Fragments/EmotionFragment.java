@@ -42,8 +42,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.services.rekognition.AmazonRekognitionClient;
+import com.amazonaws.services.rekognition.model.Emotion;
 import com.amazonaws.services.rekognition.model.FaceDetail;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.rhmauricio.proyectopdi.R;
+import com.rhmauricio.proyectopdi.classes.DatosPublicidad;
 import com.rhmauricio.proyectopdi.classes.DeteccionRostros;
 import com.rhmauricio.proyectopdi.classes.ObtencionCredenciales;
 
@@ -70,6 +74,10 @@ public class EmotionFragment extends Fragment {
     private TextureView textureView;
     private TextView emotionsTextView;
     private ImageView logos;
+
+    // Write a message to the database
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference dbReference = database.getReference("Publicidad");
 
     //Check state orientation of output image
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -123,9 +131,6 @@ public class EmotionFragment extends Fragment {
             cameraDevice=null;
         }
     };
-
-
-
 
     public EmotionFragment() {
         // Required empty public constructor
@@ -198,10 +203,18 @@ public class EmotionFragment extends Fragment {
                 Toast.makeText(getContext(), "no Detectó", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            DatosPublicidad datosPublicidad = new DatosPublicidad();
             //Toast.makeText(getContext(), "Detectó detalles", Toast.LENGTH_SHORT).show();
             for (FaceDetail detalleRostro: detallesRostro) {
                 Log.d("Emociones: ", detalleRostro.getEmotions().toString());
-                emotionsTextView.setText(detalleRostro.getEmotions().toString());
+                //emotionsTextView.setText(detalleRostro.getEmotions());
+
+                for(Emotion emotion: detalleRostro.getEmotions()) {
+                    if (emotion.getType().equalsIgnoreCase("happy")) {  // Happy Calm Sad
+                        datosPublicidad.setFelicidad(emotion.getConfidence());
+                    }
+                }
             }
         }
     };
@@ -481,7 +494,7 @@ public class EmotionFragment extends Fragment {
         public void onClick(View v) {
             val = (val < 4)? ++val: 0;
             logos.setImageBitmap(arregoloLogos.get(val));
-            //takePicture();
+            takePicture();
 
         }
     };

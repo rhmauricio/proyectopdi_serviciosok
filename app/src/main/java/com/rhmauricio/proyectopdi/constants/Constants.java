@@ -8,4 +8,12 @@ public class Constants {
     public final static int CREPES=2;
     public final static int SURAA=3;
 
+    public final static String[] BRANDS = {
+            "cine_colombia",
+            "colombina",
+            "crepes",
+            "epm",
+            "sura"
+    };
+
 }

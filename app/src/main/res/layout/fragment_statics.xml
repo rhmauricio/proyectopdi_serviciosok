@@ -4,23 +4,110 @@
     android:layout_height="match_parent"
     tools:context="com.rhmauricio.proyectopdi.Fragments.StaticsFragment">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+    <ViewFlipper
+        android:id="@+id/view_flipper"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="prueba"/>
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null">
-        </ListView>
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:adjustViewBounds="true"
+                android:src="@drawable/cinecolombia"
+                android:scaleType="fitXY" />
+
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart_cine"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:adjustViewBounds="true"
+                android:src="@drawable/crepes"
+                android:scaleType="fitXY" />
+
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart_crepes"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:adjustViewBounds="true"
+                android:src="@drawable/epm"
+                android:scaleType="fitXY" />
+
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart_epm"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:adjustViewBounds="true"
+                android:src="@drawable/colombina"
+                android:scaleType="fitXY" />
+
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart_colombina"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:adjustViewBounds="true"
+                android:src="@drawable/suraa"
+                android:scaleType="fitXY" />
+
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart_sura"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.2" />
+        </LinearLayout>
+    </ViewFlipper>
 
 </FrameLayout>
