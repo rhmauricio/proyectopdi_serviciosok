@@ -50,6 +50,7 @@ import com.rhmauricio.proyectopdi.R;
 import com.rhmauricio.proyectopdi.classes.DatosPublicidad;
 import com.rhmauricio.proyectopdi.classes.DeteccionRostros;
 import com.rhmauricio.proyectopdi.classes.ObtencionCredenciales;
+import com.rhmauricio.proyectopdi.constants.Constants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,6 +75,9 @@ public class EmotionFragment extends Fragment {
     private TextureView textureView;
     private TextView emotionsTextView;
     private ImageView logos;
+
+    private int imagesIndex;
+    private int brandsIndex;
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -154,7 +158,8 @@ public class EmotionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        val = 0;
+        imagesIndex = 0;
+        brandsIndex = -1;
 
         ObtencionCredenciales credenciales = new ObtencionCredenciales(getContext(), listenerCredenciales);
         credenciales.execute();
@@ -211,11 +216,27 @@ public class EmotionFragment extends Fragment {
                 //emotionsTextView.setText(detalleRostro.getEmotions());
 
                 for(Emotion emotion: detalleRostro.getEmotions()) {
-                    if (emotion.getType().equalsIgnoreCase("happy")) {  // Happy Calm Sad
+                    if (emotion.getType().equalsIgnoreCase("happy")) {  // Happy Calm Sad Confused Surprised Angry
                         datosPublicidad.setFelicidad(emotion.getConfidence());
+                    } else if (emotion.getType().equalsIgnoreCase("sad")) {
+                        datosPublicidad.setTristeza(emotion.getConfidence());
+                    } else if (emotion.getType().equalsIgnoreCase("calm")) {
+                        datosPublicidad.setCalma(emotion.getConfidence());
+                    } else if (emotion.getType().equalsIgnoreCase("confused")) {
+                        datosPublicidad.setConfusion(emotion.getConfidence());
+                    } else if (emotion.getType().equalsIgnoreCase("angry")) {
+                        datosPublicidad.setEnojo(emotion.getConfidence());
+                    } else if (emotion.getType().equalsIgnoreCase("surprised")) {
+                        datosPublicidad.setSorpresa(emotion.getConfidence());
                     }
                 }
+
+                datosPublicidad.setEdadPromedio((detalleRostro.getAgeRange().getHigh() + detalleRostro.getAgeRange().getLow()) / 2);
             }
+
+            DatabaseReference newDbReference = dbReference.child(Constants.BRANDS[brandsIndex]);
+            newDbReference = newDbReference.push();
+            newDbReference.setValue(datosPublicidad);
         }
     };
     private void takePicture() {
@@ -488,14 +509,16 @@ public class EmotionFragment extends Fragment {
         stopBackgroundThread();
         super.onPause();
     }
-    int val;
+
+
+
     View.OnClickListener nextButtonListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            val = (val < 4)? ++val: 0;
-            logos.setImageBitmap(arregoloLogos.get(val));
+            brandsIndex = (brandsIndex < 4)? ++brandsIndex : 0;
+            imagesIndex = (imagesIndex < 4)? ++imagesIndex : 0;
+            logos.setImageBitmap(arregoloLogos.get(imagesIndex));
             takePicture();
-
         }
     };
 }

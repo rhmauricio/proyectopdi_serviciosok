@@ -7,7 +7,37 @@ public class DatosPublicidad {
 
     private double tristeza;
 
-    private int edad;
+    private double sorpresa;
+
+    private double calma;
+
+    private double confusion;
+
+    private int edadPromedio;
+
+    public double getSorpresa() {
+        return sorpresa;
+    }
+
+    public void setSorpresa(double sorpresa) {
+        this.sorpresa = sorpresa;
+    }
+
+    public double getCalma() {
+        return calma;
+    }
+
+    public void setCalma(double calma) {
+        this.calma = calma;
+    }
+
+    public double getConfusion() {
+        return confusion;
+    }
+
+    public void setConfusion(double confusion) {
+        this.confusion = confusion;
+    }
 
     public double getFelicidad() {
         return felicidad;
@@ -33,11 +63,11 @@ public class DatosPublicidad {
         this.tristeza = tristeza;
     }
 
-    public int getEdad() {
-        return edad;
+    public int getEdadPromedio() {
+        return edadPromedio;
     }
 
-    public void setEdad(int edad) {
-        this.edad = edad;
+    public void setEdadPromedio(int edadPromedio) {
+        this.edadPromedio = edadPromedio;
     }
 }
