@@ -31,12 +31,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rhmauricio.proyectopdi.R;
 import com.rhmauricio.proyectopdi.classes.DatosPublicidad;
-import com.rhmauricio.proyectopdi.constants.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.rhmauricio.proyectopdi.constants.Constants.BRANDS;
 
 
 public class StaticsFragment extends Fragment {
@@ -45,15 +46,7 @@ public class StaticsFragment extends Fragment {
 
     private Context mContext;
 
-    private CombinedChart mChartCine;
-
-    private CombinedChart mChartColombina;
-
-    private CombinedChart mChartCrepes;
-
-    private CombinedChart mChartEpm;
-
-    private CombinedChart mChartSura;
+    private Map<String, CombinedChart> chartsMap;
 
     private Map<String, List<DatosPublicidad>> brandsData;
 
@@ -70,11 +63,13 @@ public class StaticsFragment extends Fragment {
 
         mContext = getContext();
 
-        mChartCine = setChartProperties(view, R.id.chart_cine);
-        mChartColombina = setChartProperties(view, R.id.chart_colombina);
-        mChartCrepes = setChartProperties(view, R.id.chart_crepes);
-        mChartEpm = setChartProperties(view, R.id.chart_epm);
-        mChartSura = setChartProperties(view, R.id.chart_sura);
+        chartsMap = new HashMap<>();
+
+        chartsMap.put(BRANDS[0], setChartProperties(view, R.id.chart_cine));
+        chartsMap.put(BRANDS[1], setChartProperties(view, R.id.chart_colombina));
+        chartsMap.put(BRANDS[2], setChartProperties(view, R.id.chart_crepes));
+        chartsMap.put(BRANDS[3], setChartProperties(view, R.id.chart_epm));
+        chartsMap.put(BRANDS[4], setChartProperties(view, R.id.chart_sura));
 
         mViewFlipper = view.findViewById(R.id.view_flipper);
 
@@ -224,13 +219,13 @@ public class StaticsFragment extends Fragment {
                         dataList.add(child.getValue(DatosPublicidad.class));
                     }
 
-                    brandsData.put(Constants.BRANDS[index], dataList);
+                    brandsData.put(BRANDS[index], dataList);
 
                     index++;
                 }
             }
 
-
+            setBarData();
 
         }
 
@@ -241,14 +236,21 @@ public class StaticsFragment extends Fragment {
     };
 
 
-    private void setBarData(List) {
-        CombinedData data = new CombinedData();
+    private void setBarData() {
 
-        data.setData(generateBarData());
 
-        xAxis.setAxisMaximum(data.getXMax() + 0.25f);
-        mChart.setData(data);
-        mChart.invalidate();
+        for(String key: brandsData.keySet()) {
+            CombinedData data = new CombinedData();
+            CombinedChart mChart = chartsMap.get(key);
+
+            data.setData(generateBarData(brandsData.get(key)));
+
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setAxisMaximum(data.getXMax() + 0.25f);
+            mChart.setData(data);
+            mChart.invalidate();
+        }
+
     }
 
 }

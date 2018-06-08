@@ -2,7 +2,6 @@ package com.rhmauricio.proyectopdi.classes;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import com.amazonaws.AmazonServiceException;
@@ -44,20 +43,20 @@ public class DeteccionRostros extends AsyncTask<String, Void, List<FaceDetail>> 
         Image image = new Image();
 
         try {
+            File file = new File(params[0]);
             //Log.d("Absolute path: ", file.getAbsolutePath());
-            //TODO: modificar por imagen tomada en app
-            //File file = new File(Environment.getExternalStorageDirectory()+"/"+ "foto_face.jpg");
-            File file = new File(Environment.getExternalStorageDirectory()+"/"+ "foto_face.jpg");
             InputStream inputStream = new FileInputStream(file);
             ByteBuffer imageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-            //ByteBuffer imageBytes = params[0];
             image.withBytes(imageBytes);
-
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            //e.printStackTrace();
+            Log.e("Error: ", "File not found");
+        } catch (IOException e) {
             //e.printStackTrace();
             Log.e("Error: ", "IO Exception");
         }
 
+        String nombreImagen = params[0];    // Nombre de la imagen
         String bucket = "S3bucket";
 
         DetectFacesRequest facesRequest = new DetectFacesRequest()

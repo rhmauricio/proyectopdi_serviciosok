@@ -7,7 +7,7 @@
     tools:context="com.rhmauricio.proyectopdi.Fragments.EmotionFragment">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/emotionsTextView"
         android:layout_width="match_parent"
         android:layout_height="21dp"
         android:layout_marginBottom="8dp"
